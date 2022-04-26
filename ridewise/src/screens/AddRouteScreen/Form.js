@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import axios from 'axios';
 import {
   Text,
   View,
@@ -12,7 +13,6 @@ import { UserContext } from '../../../App';
 import { REACT_APP_MONGO_DB_BASE_URL, REACT_APP_REALM_SECRET } from '@env';
 import { Formik } from 'formik';
 import { validationSchema } from './validator';
-import ReactChipsInput from 'react-native-chips';
 import { styles } from '../../styles/Styles';
 
 export default Form = ({ navigation }) => {
@@ -25,11 +25,12 @@ export default Form = ({ navigation }) => {
         initialValues={{
           startPoint: '',
           endPoint: '',
-          days: [],
-          zipCodes: [],
+          days: ['Monday', 'Tuesday', 'Wednesday'],
+          zipCodes: ['393930', '393030', '00700'],
           maxSharingAllowed: '1',
         }}
         onSubmit={(formValues, actions) => {
+          console.log(formValues);
           axios
             .post(`${REACT_APP_MONGO_DB_BASE_URL}/addRoute?secret=${REACT_APP_REALM_SECRET}`, {
               ...formValues,
@@ -39,7 +40,7 @@ export default Form = ({ navigation }) => {
               console.log('New Route added DB side!!');
               ToastAndroid.show('New Route added!!', ToastAndroid.LONG);
               actions.resetForm();
-              navigation.jumpTo('HomeScreen');
+              navigation.navigate('HomeScreen');
             });
         }}
       >
@@ -47,7 +48,7 @@ export default Form = ({ navigation }) => {
           <View>
             <TextInput
               placeholder="Start Point"
-              style={style.TextInputStyleClass}
+              style={styles.textInput}
               value={props.values.startPoint}
               onChangeText={props.handleChange('startPoint')}
             />
@@ -55,52 +56,36 @@ export default Form = ({ navigation }) => {
 
             <TextInput
               placeholder="End Point"
-              style={style.TextInputStyleClass}
+              style={styles.textInput}
               placeholderTextColor="#3b4956"
               value={props.values.endPoint}
               onChangeText={props.handleChange('endPoint')}
-              keyboardType="numeric"
             />
             <Text style={[style.error]}>{props.errors.endPoint}</Text>
 
-            <Text>Zip codes which might fall into your route</Text>
-            <ReactChipsInput
-              label="Zip codes which might fall into your route"
-              inputStyle={{
-                fontSize: 16,
-                backgroundColor: '#FFFFFF',
-                color: 'black',
-                borderWidth: 2,
-                borderColor: 'white',
-                borderRadius: 18,
-                marginBottom: 30,
-                height: 50,
-              }}
-              chipStyle={{ borderColor: 'blue', backgroundColor: 'grey' }}
+            <TextInput
+              placeholder="Zip codes falling on your route(83939, 78393..)"
+              style={styles.textInput}
+              placeholderTextColor="#3b4956"
+              value={props.values.zipCodes.join(',')}
             />
+            <Text style={[style.error]}>{props.errors.zipCodes}</Text>
 
-            <Text>Days when you take this route eg: Mo/Tu</Text>
-            <ReactChipsInput
-              label="Days when you take this route eg: Mo/Tu"
-              inputStyle={{
-                fontSize: 16,
-                backgroundColor: '#FFFFFF',
-                color: 'black',
-                borderWidth: 2,
-                borderColor: 'white',
-                borderRadius: 18,
-                marginBottom: 30,
-                height: 50,
-              }}
-              chipStyle={{ borderColor: 'blue', backgroundColor: 'grey' }}
+            <TextInput
+              placeholder="Days when you take this route(Monday, Tuesday..)"
+              style={styles.textInput}
+              placeholderTextColor="#3b4956"
+              value={props.values.days.join(',')}
             />
+            <Text style={[style.error]}>{props.errors.days}</Text>
 
             <TextInput
               placeholder="Max Sharing Allowed"
-              style={style.TextInputStyleClass}
+              style={styles.textInput}
               placeholderTextColor="#3b4956"
               value={props.values.maxSharingAllowed}
               onChangeText={props.handleChange('maxSharingAllowed')}
+              keyboardType="numeric"
             />
             <Text style={[style.error]}>{props.errors.maxSharingAllowed}</Text>
 
@@ -124,14 +109,6 @@ export default Form = ({ navigation }) => {
 };
 
 const style = StyleSheet.create({
-  TextInputStyleClass: {
-    color: 'black',
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 18,
-    backgroundColor: '#FFFFFF',
-  },
-
   error: {
     color: 'red',
   },

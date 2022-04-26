@@ -1,3 +1,24 @@
+<h2>Web version created in React avaiable here: https://github.com/pdhruv93/ridewise</h2>
+<h2>Splash Screen</h2>
+<img src="screenshots/1.PNG" width="350">
+
+<h2>Home screen: List View</h2>
+<img src="screenshots/2.PNG" width="350">
+
+<h2>Add new Route: Formik and Yup</h2>
+<img src="screenshots/3.PNG" width="350">
+
+<h2>Google Sigin</h2>
+<img src="screenshots/4.PNG" width="350">
+
+<h2>MongoDB Atlas for Backend as a service: Custom HTTPS endpoints</h2>
+<img src="screenshots/5.PNG">
+<br>
+<h2>Custom functions in MongoDB Realm</h2>
+<img src="screenshots/6.PNG">
+<br>
+
+
 Create new project
 =============================
 npx react-native init ridewise

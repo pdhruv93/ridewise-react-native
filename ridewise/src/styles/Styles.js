@@ -24,4 +24,11 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
     padding: 7,
   },
+  textInput: {
+    color: 'black',
+    borderWidth: 2,
+    borderColor: 'white',
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
+  },
 });
