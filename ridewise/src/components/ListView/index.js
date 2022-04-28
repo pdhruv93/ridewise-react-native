@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { openRealm } from '../../database';
+import { getUser } from '../../database';
 import { UserContext } from '../../../App';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
@@ -17,34 +17,18 @@ import { REACT_APP_MONGO_DB_BASE_URL, REACT_APP_REALM_SECRET } from '@env';
 import { styles } from '../../styles/Styles';
 
 export default ListView = (props) => {
-  const [realm, setRealm] = useState(null);
   const [routesList, setRoutesList] = useState([]);
   const { userDetails, setUserDetails } = useContext(UserContext);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    const getRealmInstance = async () => {
-      const realm = await openRealm();
-      setRealm(realm);
+    const getRoutes = async () => {
+      const realmUser = await getUser();
+      const routes = await realmUser.functions.searchRoutes({ query: { q: searchQuery } });
+      setRoutesList(routes);
     };
 
-    getRealmInstance();
-  }, []);
-
-  useEffect(() => {
-    if (realm) {
-      const routes = realm.objects('route');
-      console.log(JSON.stringify(routes));
-      setRoutesList(routes);
-    }
-  }, [realm]);
-
-  useEffect(() => {
-    axios
-      .get(
-        `${REACT_APP_MONGO_DB_BASE_URL}/searchRoutes?secret=${REACT_APP_REALM_SECRET}&q=${searchQuery}`
-      )
-      .then((routes) => setRoutesList(routes.data));
+    getRoutes();
   }, [searchQuery]);
 
   function deleteRoute(routeId) {
@@ -72,7 +56,7 @@ export default ListView = (props) => {
       <FlatList
         data={routesList}
         showsVerticalScrollIndicator={false}
-        keyExtractor={(item) => item._id.$oid}
+        keyExtractor={(item) => item._id}
         renderItem={({ item }) => {
           //console.log(item.creatorDetails[0]);
           return (

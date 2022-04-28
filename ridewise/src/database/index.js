@@ -12,7 +12,7 @@ function getRealmApp() {
   return new Realm.App(appConfig);
 }
 
-async function login() {
+export async function getUser() {
   let user;
   try {
     const app = getRealmApp();
@@ -26,7 +26,7 @@ async function login() {
 
 export async function openRealm() {
   console.log('REALM PATH', Realm.defaultPath);
-  let user = await login();
+  let user = await getUser();
   let realm;
   try {
     console.log(`Logged in with the user: ${user.id}`);
