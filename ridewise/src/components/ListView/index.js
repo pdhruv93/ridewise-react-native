@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { getUser } from '../../database';
 import { UserContext } from '../../../App';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
@@ -12,35 +11,31 @@ import {
   ToastAndroid,
   TextInput,
 } from 'react-native';
-import axios from 'axios';
-import { REACT_APP_MONGO_DB_BASE_URL, REACT_APP_REALM_SECRET } from '@env';
 import { styles } from '../../styles/Styles';
 
 export default ListView = (props) => {
   const [routesList, setRoutesList] = useState([]);
-  const { userDetails, setUserDetails } = useContext(UserContext);
+  const { userDetails, realmUser } = useContext(UserContext);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const getRoutes = async () => {
-      const realmUser = await getUser();
       const routes = await realmUser.functions.searchRoutes({ query: { q: searchQuery } });
+      //console.log(routes);
       setRoutesList(routes);
     };
 
-    getRoutes();
-  }, [searchQuery]);
+    if (realmUser) {
+      getRoutes();
+    }
+  }, [realmUser, searchQuery]);
 
   function deleteRoute(routeId) {
     console.log(`Deleting routeId: ${routeId}`);
-    axios
-      .delete(
-        `${REACT_APP_MONGO_DB_BASE_URL}/deleteRoute?secret=${REACT_APP_REALM_SECRET}&routeId=${routeId}`
-      )
-      .then(() => {
-        console.log('Route deleted DB side!!');
-        ToastAndroid.show('Route deleted!!', ToastAndroid.LONG);
-      });
+    realmUser.functions.deleteRoute({ query: { routeId: `${routeId}` } }).then(() => {
+      console.log('Route deleted DB side!!');
+      ToastAndroid.show('Route deleted!!', ToastAndroid.LONG);
+    });
   }
 
   return routesList ? (
@@ -85,7 +80,7 @@ export default ListView = (props) => {
                     {item.days.map((day) => day.substring(0, 2) + ' ')}
                   </Text>
                   <Text style={{ fontSize: 15 }}>
-                    {item.creatorDetails[0].name} / Max Sharing: {item.maxSharingAllowed.$numberInt}
+                    {item.creatorDetails[0].name} / Max Sharing: {item.maxSharingAllowed}
                   </Text>
                 </View>
               </View>
@@ -96,7 +91,7 @@ export default ListView = (props) => {
                       name="delete"
                       color={styles.PRIMARY_COLOR}
                       size={25}
-                      onPress={() => deleteRoute(item._id.$oid)}
+                      onPress={() => deleteRoute(item._id)}
                     />
                   ) : (
                     <MaterialCommunityIcons

@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler';
 import React, { createContext, useState, useEffect } from 'react';
+import { getUser } from './src/database';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from './src/screens/SplashScreen';
@@ -12,6 +13,7 @@ export const UserContext = createContext();
 
 export default App = () => {
   const [userDetails, setUserDetails] = useState(null);
+  const [realmUser, setRealmUser] = useState(null);
   const Stack = createNativeStackNavigator();
 
   useEffect(() => {
@@ -34,12 +36,18 @@ export default App = () => {
       }
     };
 
+    const getRealmUser = async () => {
+      const realmUser = await getUser();
+      setRealmUser(realmUser);
+    };
+
     getGoogleUser();
+    getRealmUser();
   }, []);
 
   return (
     <NavigationContainer>
-      <UserContext.Provider value={{ userDetails, setUserDetails }}>
+      <UserContext.Provider value={{ userDetails, setUserDetails, realmUser }}>
         <Stack.Navigator initialRouteName="SplashScreen" screenOptions={{ headerShown: false }}>
           <Stack.Screen name="SplashScreen" component={SplashScreen} />
           <Stack.Screen name="HomeScreen" component={HomeScreen} />

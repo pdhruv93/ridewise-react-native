@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import axios from 'axios';
 import {
   Text,
   View,
@@ -10,13 +9,12 @@ import {
   ScrollView,
 } from 'react-native';
 import { UserContext } from '../../../App';
-import { REACT_APP_MONGO_DB_BASE_URL, REACT_APP_REALM_SECRET } from '@env';
 import { Formik } from 'formik';
 import { validationSchema } from './validator';
 import { styles } from '../../styles/Styles';
 
 export default Form = ({ navigation }) => {
-  const { userDetails, setUserDetails } = useContext(UserContext);
+  const { userDetails, realmUser } = useContext(UserContext);
 
   return (
     <ScrollView style={{ marginTop: 10, marginBottom: 30 }}>
@@ -31,10 +29,12 @@ export default Form = ({ navigation }) => {
         }}
         onSubmit={(formValues, actions) => {
           console.log(formValues);
-          axios
-            .post(`${REACT_APP_MONGO_DB_BASE_URL}/addRoute?secret=${REACT_APP_REALM_SECRET}`, {
-              ...formValues,
-              creator: userDetails.id,
+          realmUser.functions
+            .addRoute({
+              body: {
+                ...formValues,
+                creator: userDetails.id,
+              },
             })
             .then(() => {
               console.log('New Route added DB side!!');
