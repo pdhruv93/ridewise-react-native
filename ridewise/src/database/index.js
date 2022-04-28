@@ -29,12 +29,12 @@ export async function openRealm() {
   let user = await login();
   let realm;
   try {
-    //console.log(`Logged in with the user: ${user.id}`);
+    console.log(`Logged in with the user: ${user.id}`);
     const config = {
       schema: [routeSchema, userSchema],
       sync: {
         user: user,
-        partitionValue: '',
+        partitionValue: null,
       },
     };
     realm = await Realm.open(config);

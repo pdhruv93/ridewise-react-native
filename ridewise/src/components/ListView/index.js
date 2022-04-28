@@ -34,11 +34,8 @@ export default ListView = (props) => {
   useEffect(() => {
     if (realm) {
       const routes = realm.objects('route');
-      console.log(
-        `The lists of routes are: ${routes.map((route) => {
-          return route._id + '\n\r';
-        })}`
-      );
+      console.log(JSON.stringify(routes));
+      setRoutesList(routes);
     }
   }, [realm]);
 
