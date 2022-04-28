@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { openRealm } from '../../database';
 import { UserContext } from '../../../App';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
@@ -16,9 +17,30 @@ import { REACT_APP_MONGO_DB_BASE_URL, REACT_APP_REALM_SECRET } from '@env';
 import { styles } from '../../styles/Styles';
 
 export default ListView = (props) => {
+  const [realm, setRealm] = useState(null);
   const [routesList, setRoutesList] = useState([]);
   const { userDetails, setUserDetails } = useContext(UserContext);
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const getRealmInstance = async () => {
+      const realm = await openRealm();
+      setRealm(realm);
+    };
+
+    getRealmInstance();
+  }, []);
+
+  useEffect(() => {
+    if (realm) {
+      const routes = realm.objects('route');
+      console.log(
+        `The lists of routes are: ${routes.map((route) => {
+          return route._id + '\n\r';
+        })}`
+      );
+    }
+  }, [realm]);
 
   useEffect(() => {
     axios

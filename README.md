@@ -49,6 +49,12 @@ You can also add this property just for your project inside android/gradle.prope
 3. Confirm JVM version by going to android and typing
 gradlew -version
 
+Check realm file from emulator
+=====================================
+1. adb -s emulator-5554 shell
+2. run-as com.ridewise
+3. cd /files/
+
 
 
 Git steps
